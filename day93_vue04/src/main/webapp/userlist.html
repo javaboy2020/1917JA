@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户页面</title>
+</head>
+<body>
+    <div id="app">
+        {{message}}<br>
+        <h2>用户列表</h2>
+        <input type="button" @click="getUserList" value="显示"><br>
+        <input type="button" @click="addUser" value="新增"><br>
+       <table border="1px red solid">
+           <tr>
+               <th>id</th>
+               <th>用户编码</th>
+               <th>用户名</th>
+               <th>密码</th>
+               <th>操作</th>
+           </tr>
+           <tr v-for="(user,index) in userList">
+               <td v-text="user.id"></td>
+               <td v-text="user.userCode"></td>
+               <td v-text="user.userName"></td>
+               <td v-text="user.userPassword"></td>
+               <td>
+                   <a href="javascript:void(0);" @click="getUserById(user.id)">查</a>
+                   <a href="">改</a>
+                   <a href="">删</a>
+               </td>
+           </tr>
+       </table>
+    </div>
+
+
+
+    <script src="js/vuejs-2.5.16.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            data:{
+                userList:[],
+                message:""
+            },
+            methods:{
+                addUser(){
+                    window.location.href="useradd.html";
+
+                },
+                getUserById(id) {
+                    alert("id:"+id);
+                    window.location.href="/userview.html?id="+id;
+                },
+                getUserList(){
+                    axios.get("/user/userlist").then(result=>{
+                        console.log("this:"+this);
+                        alert("userList:"+result.data);
+                        this.userList=result.data.userList;
+                        this.message="成功";
+                    }).catch(e=>{
+                        alert(e);
+                        this.message="失败!";
+                    });
+                }
+            },
+            created(){
+                this.getUserList();
+            }
+        });
+    </script>
+</body>
+</html>

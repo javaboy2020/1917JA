@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户页面</title>
+</head>
+<body>
+    <div id="app">
+        {{message}}<br>
+        <h2>用户详情</h2>
+        <input name="userCode" v-model="user.userCode">
+
+       <table border="1px red solid">
+           <tr>
+               <th>id</th>
+               <th>用户编码</th>
+               <th>用户名</th>
+               <th>密码</th>
+           </tr>
+           <tr>
+               <td >{{user.id}}</td>
+               <td v-text="user.userCode"></td>
+               <td v-text="user.userName"></td>
+               <td >{{user.userPassword}}</td>
+           </tr>
+       </table>
+    </div>
+
+
+
+    <script src="js/vuejs-2.5.16.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            data:{
+                user:{id:0,userCode:"",userName:"",userPassword:""},
+                message:""
+            },
+            methods:{
+                 GetQueryString(name) {
+                var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+                 var r = window.location.search.substr(1).match(reg);
+                if(r!=null){return  unescape(r[2])}else{ return null};
+                     }
+
+            },
+            created(){
+                //var tempUser=this.user;
+             var id=this.GetQueryString("id");
+             console.log("id:"+id);
+             axios.get("/user/"+id).then(ressult=>{
+                console.log("axios.get,this.user"+this.user)
+                 if (ressult.data.flag){
+                     console.log("if (response.data.flag)"+this.user)
+                     console.log("user:"+ressult.data.user.userCode);
+                     this.user=ressult.data.user;
+                 }
+               // this.user=tempUser;
+             }).catch(error=>{
+                 console.log(error);
+                 window.location.href="/error.html";
+             });
+            }
+        });
+    </script>
+</body>
+</html>
